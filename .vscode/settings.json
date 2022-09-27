@@ -1,4 +1,7 @@
 {
     "cSpell.language": "en,pt-BR",
-    "C_Cpp.errorSquiggles": "Disabled"
+    "C_Cpp.errorSquiggles": "Disabled",
+    "cSpell.words": [
+        "botfather"
+    ]
 }

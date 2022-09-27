@@ -14,6 +14,7 @@
 
 \documentclass[12pt]{article}
 \usepackage[pdftex]{hyperref}
+\usepackage[table,xcdraw]{xcolor}
 
 
 \usepackage{sbc-template}
@@ -23,10 +24,10 @@
 
 %\usepackage[brazil]{babel}   
 \usepackage[utf8]{inputenc}  
-
+\usepackage{float}
 \sloppy
 
-\title{Relatório 2º Simulação de semáforo usando ESP32}
+\title{Pré-projeto: Controlador de repedidor de sinal wi-fi acionado via telegram}
 
 \author{João Vitor Moreira Duarte }
 
@@ -41,62 +42,39 @@
 
 \maketitle
 \begin{resumo}
-  Nesse relatório sera feito a descrição da aula pratica de microcontroladores aonde fazemos a simulação de um semáforo usando o LEDs e um ESP32.
+  Esse documento tem como proposta apresentar a ideia inicial para o trabalho final da cadeira de microcontroladores
+  ministrada pelo professor, Sandro Cesar Silveira Juca no Instituto de Federal de Educação e Tecnologia(IFCE) campus Maracanaú.
+  A ideia sugerida é utilizar o microcontrolador ESP32, para repetir o sinal de uma rede wi-fi e controlar o acionamento
+  do repedidor por meio de um bot do telegram com possíveis funcionalidades para monitorar o uso da rede.
 \end{resumo}
 
 
 \section{Introdução}
-Nessa aula pratica foi abordado o uso do microcontrolador modelo ESP32, para realizar o acionamento de LEDs
-com o intuito de simular um semáforo. Para isso utilizamos, o ESP32, tres LEDs(verde, amarelo e vermelho),
-uma protoboard, três jumpers um para cada LEDs e um cabo micro-usb para alimentação.
+Segundo \cite{ALMEIDA} a automação residencial ainda possui um alto custo para o
+grupo ao qual se destina. Tendo em vista que nem todos tem acesso a grandes orçamentos para tentar automatizar sua residencia,
+é de grande importância que seja possível criar soluções baixo custo quando pensamos em automatizar alguma parte do dia a dia dentro de uma residencia.
 
-\section{Componentes} \label{sec:firstpage}
+Dessa forma projetos como repetidores de wi-fi simples e de custo baixo são uma boa porta de entrada para uma casa mais automatizada,
+assim utilizando o microcontrolador ESP32 que tem um custo relativamente baixo comparado com os repetidores de sinal que vemos hoje no mercado
+é possível deixar uma residencia mais \emph{smart}.
+
+\section{Fundamentação Teórica}
+Para esse projeto foi levado em consideração a assediabilidade para reprodução, dessa forma o projeto visa utilizar somente de softwares gratuitos e materiais de baixo custo.
+Com isso, usaremos somente o microcontrolador ESP32 pelo seu preço acessível e sua capacidade de conectar-se a uma rede sem fio, para fazer a comunicação entre usuário e
+controlador sera feito uso do software gratuito, telegram e sua funcionalidade de criar bots dentro do aplicativo, estes irão acionar o nosso esp. E para ambiente de desenvolvimento,
+sera utilizado o Arduino IDE, que é uma ferramenta para programar placas como o ESP, Arduino e raspberry's.
 
 \subsection{ESP32}
-É um pequeno microcontrolador desenvolvido com a capacidade de proporcionar comunicação sem fio através do Wifi
-e através do próprio sistema Bluetooth. Seu pequeno tamanho e a sua grande eficiência fazem com que este dispositivo
+É um pequeno microcontrolador que tem suporte tanto para Wi-fi e Bluetooth. Seu pequeno tamanho e a sua grande eficiência fazem com que este dispositivo
 destaca-se dentre tantos outros.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=.5\textwidth]{Images/ESP32.jpg}
+  \includegraphics[width=.35\textwidth]{Images/ESP32.jpg}
   \caption{ESP32}
   \label{fig:exampleESP32}
 \end{figure}
 
-\subsection{Protoboard}
-É uma matriz de matriz de contato, ou contato, ou placa de ensaio (ou em inglês breadboard)
-é uma placa com furos de furos de conexões conexões condutoras condutoras para montagem montagem de
-circuitos elétricos circuitos elétricos elétricos experimentais experimentais.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=.5\textwidth]{Images/protoboard.jpg}
-  \caption{Protoboard}
-  \label{fig:exampleProtoboard}
-\end{figure}
-
-\subsection{LEDs}
-É  um componente eletrônico semicondutor, ou seja, um diodo emissor de luz ( L.E.D = Light emitter diode ),
-mesma tecnologia utilizada nos chips dos computadores, que tem a propriedade de transformar energia elétrica em luz.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=.45\textwidth]{Images/LEDs.jpg}
-  \caption{LEDs}
-  \label{fig:exampleLEDs}
-\end{figure}
-
-\subsection{Jumpers}
-São pequenos fios condutores que podem ser conectados a uma protoboard
-para interligar dois pontos do circuito em projetos eletrônicos.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=.45\textwidth]{Images/jumpers.jpg}
-  \caption{Jumpers}
-  \label{fig:exampleJumpers}
-\end{figure}
 \subsection{ArduinoIDE}
 É uma aplicação de plataforma cruzada, escrito em funções de C e C ++. É usado para escrever e fazer upload de
 programas em placas compatíveis com Arduino, mas também, com a ajuda de núcleos de terceiros, outras placas de
@@ -106,27 +84,46 @@ Para exportar o código para o nosso ESP32 foi adicionado a placa dentro da IDE 
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=.45\textwidth]{Images/arduinoIDELogo.png}
+  \includegraphics[width=.25\textwidth]{Images/arduinoIDELogo.png}
   \caption{Logo de ArduinoIDE}
   \label{fig:exampleArduinoIDE}
 \end{figure}
 
-\section{Código fonte}
-Agora vamos dar uma olhada no código fonte utilizado para passar as instruções para o ESP32
-\lstinputlisting[language=C, firstline=1, lastline=29]{code/semafaro.INO}
 
-\section{Resultados}
-Juntando tudo oque foi feito conseguimos como resultado o acionamento dos LEDs, com intervalo programado e controlado pelo ESP32.
+\subsection{Telegram e Bot}
+O Telegram é um aplicativo gratuito de mensagens que pode ser acessado tanto do \emph{smartphone} quanto pela \emph{web}
+usaremos ele para gerenciar o controle do nosso repedidor.
+O telegram tem como diferencial a possibilidade de criar bots usando uma ferramenta apelidada de \emph{botfather},
+bots criados por ele podem receber comandos para executar algumas ações e é por meio de um bot criado por ele que faremos a comunicação com
+nosso repetidor.
+
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=.35\textwidth]{Images/Captura de tela 2022-09-26 140817.png}
-  \caption{Resultado}
-  \label{fig:exampleLedPiscando}
+  \includegraphics[width=.25\textwidth]{Images/header.png}
+  \caption{Logo de ArduinoIDE e botfather}
+  \label{fig:exampleTelegram}
 \end{figure}
 
-O video pode ser acessado clicando em: \emph{\href{https://imgur.com/a/BEnh8kg}{video}}
+\section{Metodologia}
+Usando as ferramentas apresentadas, é proposto criar um bot por meio do telegram, que se comunique com o microcontrolador para acionar a repetição de sinal
+com as instruções passadas para o esp32 por meio do ArduinoIDE incluindo respostas para informar status do aparelho para o usuário.
 
+\section{Cronograma}
+
+\begin{table}[hb]
+  \centering
+  \begin{tabular}{|l|c|c|c|}
+    \hline
+    \rowcolor[HTML]{9B9B9B}
+    Atividade                    & out & nov & dez \\ \hline
+    \rowcolor[HTML]{C0C0C0}
+    Construção do bot e codigo   & X   &     &     \\ \hline
+    \rowcolor[HTML]{C0C0C0}
+    Integração do bot com codigo & X   & X   &     \\ \hline
+    \rowcolor[HTML]{C0C0C0}
+    Testes do repetidor          &     &     & X   \\ \hline
+  \end{tabular}
+\end{table}
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
-\nocite{SANDROJUCA}
 \end{document}
